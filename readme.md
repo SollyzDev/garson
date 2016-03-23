@@ -24,4 +24,8 @@ a set of tools that i created for purpose of learning
 
 #### TODO
 
-* regexp for urls
+* write Response helpers
+* use my custom response instead of http.ResponseWriter
+* regexp for url path and extract them as variables in Request
+* router.ServeStatic(path string) a function to serve the static files
+* Middlewares support ! 
