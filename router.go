@@ -19,7 +19,7 @@ func (r Router) Get(path string, handler HandlerFunc) {
   route.Method = "GET"
   route.Path = path
   route.Handler = handler
-  r.Routes.Append(route)
+  r.Routes = append(r.Routes, route)
 }
 
 func (r Router) Post(route string) {
