@@ -9,7 +9,6 @@ Simple Go router created for learning purposes
 #### Usage
 
     import (
-        ...
         "net/http"
         "github.com/eslammostafa/garson"
     )
@@ -17,8 +16,8 @@ Simple Go router created for learning purposes
 
     func main() {
         router := garson.New()
-        router.Get("/hello", func(w http.ResponseWriter, r *http.Request){
-            return "Hello World"
+        router.Get("/hello", func(res http.ResponseWriter, req *http.Request){
+            ws.Write([]byte("Hello World"))
         })
         http.ListenAndServe(":8080", router)
     }

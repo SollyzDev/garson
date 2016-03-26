@@ -1,6 +1,9 @@
 package garson
 
-import "net/http"
+import (
+    "net/http"
+    "errors"
+)    
 
 // Router struct
 type Router struct {
@@ -16,13 +19,13 @@ type Route struct {
 
 // Handle serves as a type of the func that is qoing to be fired 
 // when the routers finds the requested route
-type Handle func(req *http.Request, res http.ResponseWriter)
+type Handle func(res http.ResponseWriter, req *http.Request)
 
 // New creates and return a new router object
 // it should be passed to http.ListenAndServe
 // example:
 // router := garson.New()
-// router.Get("/hello", func(req *http.Request, res http.ResponseWriter){})
+// router.Get("/hello", func(res http.ResponseWriter, req *http.Request){})
 // http.ListenAndServe(":8080", router)
 func New() *Router {
     return &Router{}
@@ -31,16 +34,17 @@ func New() *Router {
 // Try loops through the routes array to find the requested route
 // If the route is not found, it returns NotFound error
 // FIX: should return (*Router,error)
-func (r *Router) Try(path string, method string) (*Route,string) { 
+func (r *Router) Try(path string, method string) (*Route, error) { 
     for _, route := range r.Routes {
         if route.Method == method && route.Path == path {
-            return &route, ""
+            return &route, nil
         }
     }
-    return &Route{}, "route not found"
+    return &Route{}, errors.New("Route not found")
 }
 
-// a shortcut func to append new routes to the routes array
+// add is a shortcut func to append new routes to the routes array
+// used in router.Get(), router.Post(), router.Put(), router.Delete()
 func add(r *Router, method string, path string, handler Handle) {
     route := Route{}
     route.Method = method
@@ -70,11 +74,11 @@ func (r *Router) Delete(path string, handler Handle) {
 }
 
 // ServeHTTP implementats of the http.Handler interface
-func (r *Router) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+func (r *Router) ServeHTTP(res http.ResponseWriter, req *http.Request) {
     route, err :=  r.Try(req.URL.Path, req.Method)
-    if err != "" {
-        //panic(err)
+    if err != nil {
+        NotFound(res)
         return
     }
-    route.Handler(req, w)
+    route.Handler(res, req)
 }
