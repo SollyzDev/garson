@@ -1,4 +1,4 @@
-package main
+package garson
 
 import "net/http"
 
