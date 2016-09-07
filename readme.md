@@ -4,23 +4,40 @@ Simple Go router created for learning purposes
 
 #### Installation
 
-    go get github.com/eslammostafa/garson
+from your shell use "go get" command to install the package
+
+```
+ go get github.com/eslammostafa/garson
+```
 
 #### Usage
 
+```
     import (
         "net/http"
-        "github.com/eslammostafa/garson"
+        g "github.com/eslammostafa/garson"
     )
 
 
     func main() {
-        router := garson.New()
-        router.Get("/hello", func(res http.ResponseWriter, req *http.Request){
-            ws.Write([]byte("Hello World"))
+        router := g.New()
+        router.Get("/hello", func(ctx *g.Context) {
+            ctx.Write("Hello World")
         })
+
+        // or better send a json response easily
+        router.Get("/json", func(ctx *g.Context) {
+            // prepare the body you want to be sent as json
+            body := map[string]interface{}
+            body["item1"] = "this is a nice item"
+            body["item2"] = "this is just a nicer item"
+            // send a json response using ctx.Json()
+            ctx.Json(body)
+        })
+
         http.ListenAndServe(":8080", router)
     }
+```
 
 #### TODO
 
