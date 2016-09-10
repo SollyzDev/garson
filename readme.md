@@ -77,16 +77,9 @@ func some_handler(ctx *g.Context) {
    // return string
    ctx.Write("Hello, World!")
    // return json, pass an object and it will be converted to json
-   posts := []string{'post1', 'post2', 'post3'}
-   ctx.Json(posts)
+   posts := []string{"post1", "post2", "post3"}
+   body = map[string]interface{}
+   body["posts"] = posts
+   ctx.Json(body)
 }
 ```
-
-
-#### TODO
-* write documentation for every struct and method
-* regexp for url path and extract them as variables in Request
-* router.ServeStatic(path string) a function to serve the static files
-* write Response helpers
-* use my custom response instead of http.ResponseWriter
-* Middlewares support !
