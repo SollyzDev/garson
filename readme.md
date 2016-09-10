@@ -12,6 +12,29 @@ from your shell use "go get" command to install the package
 
 #### Usage
 
+Garson supports 4 http methods, 
+first import garson and then initialize the router inside the main func,
+
+```go
+import (
+    "net/http"
+    g "github.com/eslammostafa/garson"
+)
+
+
+func main() {
+    router := g.New()
+    router.Get('/posts', func(ctx *g.Context){})
+    router.Post('/posts', func(ctx *g.Context){})
+    router.Put('/posts/:id', func(ctx *g.Context){})
+    router.Delete('/:posts/:id, func(ctx *g.Context{})
+
+    http.ListenAndServe(":8080", router)
+}
+```
+
+#### Example
+
 ```go
 import (
     "net/http"
@@ -38,6 +61,27 @@ func main() {
     http.ListenAndServe(":8080", router)
 }
 ```
+
+#### Context
+
+Garson's context is just a wrapper for the net/http request and response writer.
+Context addes useful methods around the default responsewriter, as you 
+can easily send Json response for example.
+
+current available methods
+
+```go
+func some_handler(ctx *g.Context) {
+   // return 404 error
+   ctx.NotFound()
+   // return string
+   ctx.Write("Hello, World!")
+   // return json, pass an object and it will be converted to json
+   posts := []string{'post1', 'post2', 'post3'}
+   ctx.Json(posts)
+}
+```
+
 
 #### TODO
 * write documentation for every struct and method
