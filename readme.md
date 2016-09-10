@@ -24,10 +24,10 @@ import (
 
 func main() {
     router := g.New()
-    router.Get('/posts', func(ctx *g.Context){})
-    router.Post('/posts', func(ctx *g.Context){})
-    router.Put('/posts/:id', func(ctx *g.Context){})
-    router.Delete('/:posts/:id, func(ctx *g.Context{})
+    router.Get("/posts", func(ctx *g.Context){})
+    router.Post("/posts", func(ctx *g.Context){})
+    router.Put("/posts/:id", func(ctx *g.Context){})
+    router.Delete("/:posts/:id", func(ctx *g.Context{})
 
     http.ListenAndServe(":8080", router)
 }
