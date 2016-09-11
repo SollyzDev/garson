@@ -83,3 +83,27 @@ func some_handler(ctx *g.Context) {
    ctx.Json(body)
 }
 ```
+
+
+#### Route Params
+
+you can easily define params in route by appending a colon ":" then a name,
+for example :
+
+```go
+router.Get("/api/articles/:id", handler)
+```
+
+now in your context in the RouteParams you will find a key called "id"
+with a string value.
+
+```go
+id := ctx.RouteParams["id"]
+```
+
+but there is a nicer way to get params using a method called **GetParam**, and supply
+it with a default value in case the key was not found.
+
+```go
+id := ctx.GetParam("id, 0)
+``
