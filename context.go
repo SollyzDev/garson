@@ -2,7 +2,6 @@ package garson
 
 import (
 	"encoding/json"
-	// "fmt"
 	"net/http"
 )
 
@@ -15,11 +14,11 @@ type Context struct {
 }
 
 func NewContext(route *Route, res http.ResponseWriter, req *http.Request) *Context {
-	ctx := Context{}
-	ctx.Request = req
-	ctx.Response = res
-	ctx.RouteParams = route.Params
-	return &ctx
+	return &Context{
+		Request:     req,
+		Response:    res,
+		RouteParams: route.Params,
+	}
 }
 
 // GetParam gets the value of a param, if the param
