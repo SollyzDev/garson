@@ -7,7 +7,7 @@ Simple Go router created for learning purposes
 from your shell use "go get" command to install the package
 
 ```bash
- go get github.com/objectizer/garson
+ go get github.com/emostafa/garson
 ```
 
 #### Usage
@@ -18,7 +18,7 @@ first import garson and then initialize the router inside the main func,
 ```go
 import (
     "net/http"
-    g "github.com/objectizer/garson"
+    g "github.com/emostafa/garson"
 )
 
 
