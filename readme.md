@@ -2,6 +2,8 @@
 
 Simple Go router created for learning purposes
 
+[![GoDoc](https://godoc.org/github.com/emostafa/garson?status.svg)](https://godoc.org/github.com/emostafa/garson)
+
 #### Installation
 
 from your shell use "go get" command to install the package
