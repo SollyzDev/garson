@@ -1,6 +1,6 @@
 # Garson
 
-Simple Go router created for learning purposes
+Simple Go router lies on top of net/http package. created for learning purposes.
 
 [![GoDoc](https://godoc.org/github.com/emostafa/garson?status.svg)](https://godoc.org/github.com/emostafa/garson)
 
@@ -26,10 +26,10 @@ import (
 
 func main() {
     router := g.New()
-    router.Get("/posts", func(ctx *g.Context){})
-    router.Post("/posts", func(ctx *g.Context){})
-    router.Put("/posts/:id", func(ctx *g.Context){})
-    router.Delete("/:posts/:id", func(ctx *g.Context{})
+    router.Get("/posts", func(w http.ResponseWriter, r *http.Request){})
+    router.Post("/posts", func(w http.ResponseWriter, r *http.Request){})
+    router.Put("/posts/:id", func(w http.ResponseWriter, r *http.Request){})
+    router.Delete("/:posts/:id", func(w http.ResponseWriter, r *http.Request){})
 
     http.ListenAndServe(":8080", router)
 }
@@ -46,46 +46,15 @@ import (
 
 func main() {
     router := g.New()
-    router.Get("/hello", func(ctx *g.Context) {
-        ctx.Write("Hello World")
+
+    router.Get("/hello", func(w http.ResponseWriter, r *http.Request){}
+        w.Write([]byte("Hello World"))
     })
 
-    // or better send a json response easily
-    router.Get("/json", func(ctx *g.Context) {
-        // prepare the body you want to be sent as json
-        body := map[string]interface{}
-        body["item1"] = "this is a nice item"
-        body["item2"] = "this is just a nicer item"
-        // send a json response using ctx.Json()
-        ctx.Json(body)
-    })
 
     http.ListenAndServe(":8080", router)
 }
 ```
-
-#### Context
-
-Garson's context is just a wrapper for the net/http request and response writer.
-Context addes useful methods around the default responsewriter, as you 
-can easily send Json response for example.
-
-current available methods
-
-```go
-func some_handler(ctx *g.Context) {
-   // return 404 error
-   ctx.NotFound()
-   // return string
-   ctx.Write("Hello, World!")
-   // return json, pass an object and it will be converted to json
-   posts := []string{"post1", "post2", "post3"}
-   body = map[string]interface{}
-   body["posts"] = posts
-   ctx.Json(body)
-}
-```
-
 
 #### Route Params
 
@@ -95,17 +64,19 @@ for example :
 ```go
 router.Get("/api/articles/:id", handler)
 ```
+Garson using go context package to store request parameters.
+the requested route parameters are stored with a key named "route_params"
 
-now in your context in the RouteParams you will find a key called "id"
-with a string value.
-
-```go
-id := ctx.RouteParams["id"]
-```
-
-but there is a nicer way to get params using a method called **GetParam**, and supply
-it with a default value in case the key was not found.
+To get the params, just get the request's context, then check the value
+of "route_params" key
 
 ```go
-id := ctx.GetParam("id, 0)
+func someHandler(w Http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	if val := ctx.Value("route_params"); val != nil {
+		params := val.(map[string]string)
+		fmt.Println(params["id"])
+	}
+	...
+}
 ```
