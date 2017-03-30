@@ -4,6 +4,8 @@ Simple Go router lies on top of net/http package. created for learning purposes.
 
 [![GoDoc](https://godoc.org/github.com/emostafa/garson?status.svg)](https://godoc.org/github.com/emostafa/garson)
 
+[![Build Status](https://travis-ci.org/emostafa/garson.svg?branch=master)](https://travis-ci.org/emostafa/garson)
+
 #### Installation
 
 from your shell use "go get" command to install the package
