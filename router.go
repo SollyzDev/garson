@@ -13,22 +13,29 @@ type Router struct {
 	Routes []*Route
 }
 
+// Params is the type of paramters passed to a route
+type Params map[string]string
+
 // Route struct just contains the method, path and Handle func
 type Route struct {
 	Method           string
-	Path             string
+	Path             *regexp.Regexp
 	RegisteredParams []string
-	Params           map[string]string
 	Handler          http.HandlerFunc
 }
 
-func (r *Route) parseParams(re *regexp.Regexp, path string) {
-	matches := re.FindAllStringSubmatch(path, -1)
-	r.Params = make(map[string]string)
-	params := matches[0][1:len(matches[0])]
-	for k, v := range params {
-		r.Params[r.RegisteredParams[k]] = v
+var paramsRegexp = regexp.MustCompile(`:(\w+)`)
+
+// parseParams parses the request url against route.Path and returns
+// a Params object
+func parseParams(route *Route, path string) Params {
+	matches := route.Path.FindAllStringSubmatch(path, -1)
+	params := Params{}
+	matchedParams := matches[0][1:]
+	for k, v := range matchedParams {
+		params[route.RegisteredParams[k]] = v
 	}
+	return params
 }
 
 // New creates and return a new router object
@@ -42,30 +49,23 @@ func New() *Router {
 }
 
 // Try loops through the routes array to find the requested route
-// If the route is not found, it returns NotFound error
-// FIX: should return (*Router,error)
-func (r *Router) Try(path string, method string) (*Route, error) {
+// If the route is not found, it returns http.NotFound error
+func (r *Router) Try(path string, method string) (http.HandlerFunc, Params, error) {
 	for _, route := range r.Routes {
 		if route.Method == method {
-			re := regexp.MustCompile(route.Path)
-			match := re.MatchString(path)
-			// check if the registered route has params
-			if match {
-				if len(route.RegisteredParams) > 0 {
-					route.parseParams(re, path)
-				}
-				return route, nil
+			match := route.Path.MatchString(path)
+			if match == false {
+				continue
 			}
+			params := Params{}
+			// check if this route has registered params, and then parse them
+			if len(route.RegisteredParams) > 0 {
+				params = parseParams(route, path)
+			}
+			return route.Handler, params, nil
 		}
 	}
-	return &Route{}, errors.New("Route not found")
-}
-
-// NotFound returns a string decalring that the requested route
-// was not found
-func NotFound(w http.ResponseWriter) {
-	w.WriteHeader(404)
-	w.Write([]byte("Not Found"))
+	return nil, Params{}, errors.New("Route not found")
 }
 
 // add is a shortcut func to append new routes to the routes array
@@ -74,50 +74,65 @@ func NotFound(w http.ResponseWriter) {
 func add(r *Router, method string, path string, handler http.HandlerFunc) {
 	route := &Route{}
 	route.Method = method
-	route.Path = "^" + path + "$"
+	path = "^" + path + "$"
 	route.Handler = handler
-	if strings.Contains(route.Path, ":") {
-		re := regexp.MustCompile(`:(\w+)`)
-		matches := re.FindAllStringSubmatch(route.Path, -1)
+	if strings.Contains(path, ":") {
+		matches := paramsRegexp.FindAllStringSubmatch(path, -1)
 		if matches != nil {
 			for _, v := range matches {
 				route.RegisteredParams = append(route.RegisteredParams, v[1])
 				// remove the :params from the url path and replace them with regex
-				route.Path = strings.Replace(route.Path, v[0], `(\w+)`, 1)
+				path = strings.Replace(path, v[0], `(\w+)`, 1)
 			}
 		}
 	}
+	compiledPath, err := regexp.Compile(path)
+	if err != nil {
+		panic(err)
+	}
+	route.Path = compiledPath
 	r.Routes = append(r.Routes, route)
 }
 
-// Get the adds a GET method to routes
+// Get adds a GET method to routes
 func (r *Router) Get(path string, handler http.HandlerFunc) {
 	add(r, "GET", path, handler)
 }
 
-// Post the adds a POST method to routes
+// Post adds a POST method to routes
 func (r *Router) Post(path string, handler http.HandlerFunc) {
 	add(r, "POST", path, handler)
 }
 
-// Put the adds a PUT method to routes
+// Put adds a PUT method to routes
 func (r *Router) Put(path string, handler http.HandlerFunc) {
 	add(r, "PUT", path, handler)
 }
 
-// Delete the adds a DELETE method to routes
+// Delete adds a DELETE method to routes
 func (r *Router) Delete(path string, handler http.HandlerFunc) {
 	add(r, "DELETE", path, handler)
 }
 
+// Head adds a HEAD method to routes
+func (r *Router) Head(path string, handler http.HandlerFunc) {
+	add(r, "HEAD", path, handler)
+}
+
+// Options adds an OPTIONS method to routes
+func (r *Router) Options(path string, handler http.HandlerFunc) {
+	add(r, "OPTIONS", path, handler)
+}
+
 // ServeHTTP implementats of the http.Handler interface
 func (router *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	route, err := router.Try(r.URL.Path, r.Method)
+	handler, params, err := router.Try(r.URL.Path, r.Method)
 	if err != nil {
-		NotFound(w)
+		http.NotFound(w, r)
 		return
 	}
-	ctx := context.WithValue(r.Context(), "route_params", route.Params)
+	ctx := context.WithValue(r.Context(), "route_params", params)
 
-	route.Handler(w, r.WithContext(ctx))
+	// execute the router handler
+	handler(w, r.WithContext(ctx))
 }
