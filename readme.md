@@ -69,14 +69,26 @@ router.Get("/api/articles/:id", handler)
 Garson using go context package to store request parameters.
 the requested route parameters are stored with a key named "route_params"
 
-To get the params, just get the request's context, then check the value
-of "route_params" key
+There is a function called "GetParam()" that makes it easier to get those parameters
+
+```go
+func someHandler(w Http.ResponseWriter, r *http.Request) {
+	id, ok := garson.GetParam(r, "id")
+    if ok != false {
+		fmt.Println(id)
+    }
+	...
+}
+```
+
+If you prefer to use the context directly, you can access it through the value
+of "route_params" key.
 
 ```go
 func someHandler(w Http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	if val := ctx.Value("route_params"); val != nil {
-		params := val.(map[string]string)
+		params := val.(garson.Params)
 		fmt.Println(params["id"])
 	}
 	...
