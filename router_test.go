@@ -20,17 +20,17 @@ func TestBasicRouter(t *testing.T) {
 	}
 }
 
-// func TestAddingRoutePanicsOnBadInput(t *testing.T) {
-// 	defer func() {
-// 		if r := recover(); r != nil {
-// 			t.Error("Router panics on bad input, instead of returning error")
-// 		}
-// 	}()
-//
-// 	router := New()
-// 	router.Get(`\p{malformed}`, nil)
-// 	router.Try("test", "GET")
-// }
+func TestAddingRoutePanicsOnBadInput(t *testing.T) {
+	defer func() {
+		if r := recover(); r != nil {
+			t.Log("Router panics on bad input, instead of returning error")
+		}
+	}()
+
+	router := New()
+	router.Get(`\p{malformed}`, nil)
+	router.Try("test", "GET")
+}
 
 func TestRoutesAreThreadSafe(t *testing.T) {
 	router := New()
@@ -50,3 +50,27 @@ func TestRoutesAreThreadSafe(t *testing.T) {
 		t.Error("Thread-unsafe sharing between two routes parameters")
 	}
 }
+
+// func TestGetParam(t *testing.T) {
+// 	router := New()
+// 	router.Get("/:name", func(w http.ResponseWriter, r *http.Request) {
+// 		name, ok := GetParam(r, "name")
+// 		if ok == false {
+// 			t.Error("Failed to get parameter (:name)")
+// 		}
+
+// 		t.Logf("name is %s", name)
+
+// 		w.Write([]byte("success"))
+// 	})
+
+// 	// handler, _, _ := router.Try("/eslam", "GET")
+// 	// r, _ := http.NewRequest("GET", "http://localhost:3000/eslam", nil)
+// 	// handler(, r)
+// 	// httptest.NewServer(router)
+
+// 	t.Log("sending request to router")
+// 	r := httptest.NewRequest("GET", "http://localhost:3000/eslam", nil)
+// 	handler, _, _ := router.Try("/eslam", "GET")
+// 	handler(nil, r)
+// }
