@@ -74,3 +74,11 @@ func TestRoutesAreThreadSafe(t *testing.T) {
 // 	handler, _, _ := router.Try("/eslam", "GET")
 // 	handler(nil, r)
 // }
+
+func TestRouterMiddlewares(t *testing.T) {
+
+}
+
+func TestRouteMiddlewares(t *testing.T) {
+
+}

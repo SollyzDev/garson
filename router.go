@@ -10,7 +10,9 @@ import (
 
 // Router struct
 type Router struct {
-	Routes []*Route
+	Routes           []*Route
+	beforeMiddleware []func(http.Handler) http.Handler
+	afterMiddleware  []func(http.Handler) http.Handler
 }
 
 // Params is the type of paramters passed to a route
@@ -22,6 +24,18 @@ type Route struct {
 	Path             *regexp.Regexp
 	RegisteredParams []string
 	Handler          http.HandlerFunc
+	BeforeMiddleware []func(http.Handler) http.Handler
+	AfterMiddleware  []func(http.Handler) http.Handler
+}
+
+// Before runs a middleware before each request
+func (r *Route) Before(middlewares ...func(http.Handler) http.Handler) {
+	r.BeforeMiddleware = append(r.BeforeMiddleware, middlewares...)
+}
+
+// After runs a middleware after each request
+func (r *Route) After(middlewares ...func(http.Handler) http.Handler) {
+	r.AfterMiddleware = append(r.AfterMiddleware, middlewares...)
 }
 
 var paramsRegexp = regexp.MustCompile(`:(\w+)`)
@@ -107,7 +121,17 @@ func (r *Router) Options(path string, handler http.HandlerFunc) {
 	r.add("OPTIONS", path, handler)
 }
 
-// ServeHTTP implementats of the http.Handler interface
+// Before runs a middleware before each request
+func (r *Router) Before(middlewares ...func(http.Handler) http.Handler) {
+	r.beforeMiddleware = append(r.beforeMiddleware, middlewares...)
+}
+
+// After runs a middleware after each request
+func (r *Router) After(middlewares ...func(http.Handler) http.Handler) {
+	r.afterMiddleware = append(r.afterMiddleware, middlewares...)
+}
+
+// ServeHTTP implements the interface of http.Handler
 func (r *Router) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	handler, params, err := r.Try(req.URL.Path, req.Method)
 	if err != nil {
@@ -116,9 +140,24 @@ func (r *Router) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	}
 
 	ctx := context.WithValue(req.Context(), "route_params", params)
+	req = req.WithContext(ctx)
 
-	// execute the router handler
-	handler(w, req.WithContext(ctx))
+	// allHandlersLength := len(r.beforeMiddleware) + len(r.afterMiddleware) + 1
+	stack := []func(http.Handler) http.Handler{}
+	stack = append(stack, r.beforeMiddleware...)
+	stack = append(stack, func(next http.Handler) http.Handler {
+		// FIX: need to call handler and then next.ServeHTTP some how
+		// and keep the middelware stack going
+		return http.HandlerFunc(handler)
+	})
+	stack = append(stack, r.afterMiddleware...)
+
+	var curMiddleware http.Handler = r
+	for i := len(stack) - 1; i > -1; i-- {
+		f := stack[i]
+		curMiddleware = f(curMiddleware)
+	}
+	curMiddleware.ServeHTTP(w, req)
 }
 
 // parseParams parses the request url against route.Path and returns
