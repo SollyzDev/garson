@@ -73,7 +73,7 @@ There is a function called "GetParam()" that makes it easier to get those parame
 
 ```go
 func someHandler(w Http.ResponseWriter, r *http.Request) {
-	id, ok := garson.GetParam(r, "id")
+    id, ok := garson.GetParam(r, "id")
     if ok != false {
 		fmt.Println(id)
     }
@@ -86,12 +86,12 @@ of "route_params" key.
 
 ```go
 func someHandler(w Http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-	if val := ctx.Value("route_params"); val != nil {
-		params := val.(garson.Params)
-		fmt.Println(params["id"])
-	}
-	...
+    ctx := r.Context()
+    if val := ctx.Value("route_params"); val != nil {
+        params := val.(garson.Params)
+        fmt.Println(params["id"])
+    }
+    ...
 }
 ```
 
@@ -122,8 +122,12 @@ func (vs *UserViewSet) DeleteSingle(w http.ResponseWriter, r *http.Request) {}
 ```
 
 ```go
+func main() {
+	...
     vs := &UserViewSet{}
     router.ViewSet("/api/users", vs)
+	....
+}
 ```
 
 The Router will automatically register routes for this ViewSet as following:
