@@ -77,7 +77,7 @@ func someHandler(w Http.ResponseWriter, r *http.Request) {
     if ok != false {
 		fmt.Println(id)
     }
-	...
+    ...
 }
 ```
 
@@ -123,10 +123,10 @@ func (vs *UserViewSet) DeleteSingle(w http.ResponseWriter, r *http.Request) {}
 
 ```go
 func main() {
-	...
+    ...
     vs := &UserViewSet{}
     router.ViewSet("/api/users", vs)
-	....
+    ....
 }
 ```
 
