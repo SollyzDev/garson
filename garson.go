@@ -1,8 +1,6 @@
 package garson
 
-import (
-	"net/http"
-)
+import "net/http"
 
 // New creates and return a new router object
 // it should be passed to http.ListenAndServe
@@ -19,9 +17,13 @@ func New() *Router {
 // router.Get("/hello/:name", ...)
 // to get the value of (:name) when users access this route:
 // name, ok := GetParam(request, "name")
-func GetParam(r *http.Request, key string) (string, bool) {
+/*func GetParam(r *http.Request, key string) (string, bool) {
 	ctx := r.Context()
 	params := ctx.Value("route_params").(Params)
 	val, ok := params[key]
 	return val, ok
+}*/
+
+func Handle(method string, path string, handler http.HandlerFunc) {
+
 }

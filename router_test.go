@@ -1,5 +1,6 @@
 package garson
 
+/*
 import (
 	"net/http"
 	"testing"
@@ -82,3 +83,4 @@ func TestRouterMiddlewares(t *testing.T) {
 func TestRouteMiddlewares(t *testing.T) {
 
 }
+*/
