@@ -94,3 +94,45 @@ func someHandler(w Http.ResponseWriter, r *http.Request) {
 	...
 }
 ```
+
+
+## ViewSets
+
+Garson allows you to create ViewSets and register it to the router directly,
+e.g:
+
+Prepare your ViewSet, it's a struct that implements garson.ViewSet interface
+
+```go
+
+type UserViewSet struct {}
+
+func (vs *UserViewSet) Get(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("Users"))
+
+}
+func (vs *UserViewSet) GetSingle(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("Just One User"))
+}
+func (vs *UserViewSet) Post(w http.ResponseWriter, r *http.Request)         {}
+func (vs *UserViewSet) PostSingle(w http.ResponseWriter, r *http.Request)   {}
+func (vs *UserViewSet) PutSingle(w http.ResponseWriter, r *http.Request)    {}
+func (vs *UserViewSet) DeleteSingle(w http.ResponseWriter, r *http.Request) {}
+
+```
+
+```go
+    vs := &UserViewSet{}
+    router.ViewSet("/api/users", vs)
+```
+
+The Router will automatically register routes for this ViewSet as following:
+
+```
+    GET /api/users          => vs.Get
+    POST /api/users         => vs.Post
+    GET /api/users/:id      => vs.GetSingle
+    POST /api/users/:id     => vs.PostSingle
+    PUT /api/users/:id      => vs.PutSingle
+    DELETE /api/users/:id   => vs.DeleteSingle
+```
