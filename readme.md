@@ -129,10 +129,10 @@ func (vs *UserViewSet) DeleteSingle(w http.ResponseWriter, r *http.Request) {}
 The Router will automatically register routes for this ViewSet as following:
 
 ```
-    GET /api/users          => vs.Get
-    POST /api/users         => vs.Post
-    GET /api/users/:id      => vs.GetSingle
-    POST /api/users/:id     => vs.PostSingle
-    PUT /api/users/:id      => vs.PutSingle
-    DELETE /api/users/:id   => vs.DeleteSingle
+    GET     /api/users          => vs.Get
+    POST    /api/users          => vs.Post
+    GET     /api/users/:id      => vs.GetSingle
+    POST    /api/users/:id      => vs.PostSingle
+    PUT     /api/users/:id      => vs.PutSingle
+    DELETE  /api/users/:id      => vs.DeleteSingle
 ```
