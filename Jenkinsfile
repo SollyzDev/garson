@@ -1,12 +1,13 @@
 pipeline {
     agent {
-        docker 'go:alpine'
+        docker { image 'golang:alpine' }
     }
 
     stages {
         stage('Build') {
             steps {
                 echo 'Building Garson....'
+                sh 'go get'
                 sh 'go build'
             }
         }
