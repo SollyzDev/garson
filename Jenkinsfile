@@ -1,5 +1,7 @@
 pipeline {
-    agent any
+    agent {
+        docker 'go:alpine'
+    }
 
     stages {
         stage('Build') {
