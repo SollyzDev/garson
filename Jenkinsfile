@@ -3,6 +3,10 @@ pipeline {
         docker { image 'golang:alpine' }
     }
 
+    environment {
+        GOHOME: "$HOME"
+    }
+
     stages {
         stage('Build') {
             steps {
