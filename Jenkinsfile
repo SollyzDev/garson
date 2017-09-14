@@ -4,15 +4,15 @@ pipeline {
     }
 
     environment {
-        GOHOME = "${HOME}"
+        GOPATH = "${HOME}"
     }
 
     stages {
         stage('Build') {
             steps {
                 echo 'Building Garson....'
-                echo '${HOME}'
-                sh 'export GOPATH=$HOME'
+                echo '${HOME} ${pwd}'
+                sh 'export GOPATH=`pwd`'
                 sh 'go get'
                 sh 'go build'
             }
