@@ -4,7 +4,7 @@ pipeline {
     }
 
     environment {
-        GOHOME: "$HOME"
+        GOHOME = "${HOME}"
     }
 
     stages {
