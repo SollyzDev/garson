@@ -11,7 +11,7 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building Garson....'
-                echo '${HOME} ${pwd}'
+                echo '$HOME `pwd` $PWD'
                 sh 'export GOPATH=`pwd`'
                 sh 'go get'
                 sh 'go build'
