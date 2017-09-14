@@ -11,8 +11,10 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building Garson....'
-                echo '$HOME `pwd` $PWD'
-                sh 'export GOPATH=`pwd`'
+                echo 'Copying project files to $HOME/src'
+                sh 'mkdir -p $HOME/go/src/github.com/emostafa/garson'
+                sh 'cp -r * $HOME/go/src/github.com/emostafa/garson'
+                sh 'cd $HOME/go/src/github.com/emostafa/garson'
                 sh 'go get'
                 sh 'go build'
             }
