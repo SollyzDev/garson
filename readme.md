@@ -101,24 +101,29 @@ func someHandler(w Http.ResponseWriter, r *http.Request) {
 Garson allows you to create ViewSets and register it to the router directly,
 e.g:
 
-Prepare your ViewSet, it's a struct that implements garson.ViewSet interface
+Prepare your ViewSet, it's a struct that implements garson.ViewSet interface.
+The ViewSet interface itself is built from another interfaces:
+ - Indexer
+ - Poster
+ - Getter
+ - Putter
+ - Deleter
+
+ You can implement all of them, or some of them, based on your needs.
+ Garson will automatically created urls for the methods you have implemented.
 
 ```go
 
 type UserViewSet struct {}
 
-func (vs *UserViewSet) Get(w http.ResponseWriter, r *http.Request) {
+func (vs *UserViewSet) Index(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Users"))
 
 }
-func (vs *UserViewSet) GetSingle(w http.ResponseWriter, r *http.Request) {
+func (vs *UserViewSet) Get(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Just One User"))
 }
 func (vs *UserViewSet) Post(w http.ResponseWriter, r *http.Request)         {}
-func (vs *UserViewSet) PostSingle(w http.ResponseWriter, r *http.Request)   {}
-func (vs *UserViewSet) PutSingle(w http.ResponseWriter, r *http.Request)    {}
-func (vs *UserViewSet) DeleteSingle(w http.ResponseWriter, r *http.Request) {}
-
 ```
 
 ```go
@@ -133,10 +138,7 @@ func main() {
 The Router will automatically register routes for this ViewSet as following:
 
 ```
-    GET     /api/users          => vs.Get
+    GET     /api/users          => vs.Index
     POST    /api/users          => vs.Post
-    GET     /api/users/:id      => vs.GetSingle
-    POST    /api/users/:id      => vs.PostSingle
-    PUT     /api/users/:id      => vs.PutSingle
-    DELETE  /api/users/:id      => vs.DeleteSingle
+    GET     /api/users/:id      => vs.Get
 ```
