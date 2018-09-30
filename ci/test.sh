@@ -10,7 +10,6 @@ echo "verify that code files are copied"
 echo "pwd is $(pwd)"
 echo $(ls)
 echo "installing dependencies"
-apk update && apk add --no-cache git
 go get
 echo "prepairing to start go test"
 go test -v .
