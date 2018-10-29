@@ -42,7 +42,7 @@ func main() {
 ```go
 import (
     "net/http"
-    g "github.com/eslammostafa/garson"
+    g "github.com/ishehata/garson"
 )
 
 
