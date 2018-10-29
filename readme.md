@@ -2,16 +2,16 @@
 
 Simple Go router lies on top of net/http package. created for learning purposes.
 
-[![GoDoc](https://godoc.org/github.com/emostafa/garson?status.svg)](https://godoc.org/github.com/emostafa/garson)
+[![GoDoc](https://godoc.org/github.com/ishehata/garson?status.svg)](https://godoc.org/github.com/ishehata/garson)
 
-[![Build Status](https://travis-ci.org/emostafa/garson.svg?branch=master)](https://travis-ci.org/emostafa/garson)
+[![Build Status](https://travis-ci.org/ishehata/garson.svg?branch=master)](https://travis-ci.org/ishehata/garson)
 
 #### Installation
 
 from your shell use "go get" command to install the package
 
 ```bash
- go get github.com/emostafa/garson
+ go get github.com/ishehata/garson
 ```
 
 #### Usage
@@ -22,7 +22,7 @@ first import garson and then initialize the router inside the main func,
 ```go
 import (
     "net/http"
-    g "github.com/emostafa/garson"
+    g "github.com/ishehata/garson"
 )
 
 
