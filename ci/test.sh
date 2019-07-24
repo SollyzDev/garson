@@ -2,7 +2,7 @@
 echo "go path is" $GOPATH
 echo $(pwd)
 echo $(ls code)
-p=$GOPATH/src/github.com/ishehata/garson
+p=$GOPATH/src/github.com/schehata/garson
 mkdir -p $p
 cp -R code/* $p/
 cd $p
